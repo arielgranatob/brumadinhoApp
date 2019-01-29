@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BrumadinhoApp</string>
+    <string name="descricaoapp">Aplicativo para auxiliar o cadastro de pessoas e animais desaparecidos</string>
+    <string name="title_activity_formulario_cadastro_pessoa">FormularioCadastroPessoa</string>
+</resources>
