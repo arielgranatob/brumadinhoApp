@@ -2,39 +2,54 @@
 
 include 'conexao.php';
 
-$nomeDesaparecido = $_POST["nomeDesaparecido"];
-$fotoDesaparecido = $_POST["fotoDesaparecido"];
-$celularDesaparecido = $_POST["celularDesaparecido"];
-$caractFisicas = $_POST["caractFisicas"];
-$tatuagemDesaparecido = $_POST["tatuagemDesaparecido"];
-$fotoTatuagem = $_POST["fotoTatuagem"];
-$cicatrizDesaparecido = $_POST["cicatrizDesaparecido"];
-$regiaoCicatriz = $_POST["regiaoCicatriz"];
-$caractMarcante = $_POST["caractMarcante"];
-$nomeDeclarante = $_POST["nomeDeclarante"];
-$contatoDeclarante = $_POST["contatoDeclarante"];
+// getPost(<nome_do_campo>,<eh_obrigatorio>)
+function getPost($campo,$obrigat) {
+	$dado = filter_input ( 'INPUT_POST' , $campo, FILTER_SANITIZE_SPECIAL_CHARS);
+	if(is_null($dado) && $obrigat === true ? $vazio[] = $campo . ' é obrigatório' : null );
+	return $dado;
+}
 
+function getImage($foto) {
+	if(is_null($foto)) {
+		return null;
+	}
+	else {
+		$filename_path = md5(time().uniqid()).".jpg";
+		$decoded=base64_decode($foto); 
+		file_put_contents("images/".$filename_path,$decoded); 
+		return $filename_path;
+	}
+}
 
-$filename_path = md5(time().uniqid()).".jpg";
-$decoded=base64_decode($fotoDesaparecido); 
-file_put_contents("images/".$filename_path,$decoded); 
-$actualpath1=$filename_path;
+$nomeDesaparecido = getPost("nomeDesaparecido",true);
+$fotoDesaparecido = getPost("fotoDesaparecido",false);
+$celularDesaparecido = getPost("celularDesaparecido",true);
+$caractFisicas = getPost("caractFisicas",true);
+$tatuagemDesaparecido = getPost("tatuagemDesaparecido",false);
+$fotoTatuagem = getPost("fotoTatuagem",false);
+$cicatrizDesaparecido = getPost("cicatrizDesaparecido",false);
+$regiaoCicatriz = getPost("regiaoCicatriz",false);
+$caractMarcante = getPost("caractMarcante",false);
+$nomeDeclarante = getPost("nomeDeclarante",true);
+$contatoDeclarante = getPost("contatoDeclarante",true);
 
+$actualpath1=getImage($fotoDesaparecido);
+$actualpath2=getImage($fotoTatuagem);
 
-$filename_path = md5(time().uniqid()).".jpg";
-$decoded=base64_decode($fotoTatuagem); 
-file_put_contents("images/".$filename_path,$decoded); 
-$actualpath2=$filename_path;
+if (!is_null($vazio)) {
+	$erro = array('erro',$vazio);
+	echo json_encode($erro);
+}
+else {
+	$sql = "INSERT INTO `tblpessoa`(`nomePessoa`, `fotoPessoa`, `celularPessoa`, `caracteristicasPessoa`, `tatuagemPessoa`, `cicatrizPessoa`, `fototatuagemPessoa`, `obscicatrizPessoa`, `caractmarcantesPessoa`, `nomedodeclarantePessoa`, `contatodeclarantePessoa`) 
+		VALUES
+		('".$nomeDesaparecido."','".$actualpath1."','".$celularDesaparecido."',
+		'".$caractFisicas."','".$tatuagemDesaparecido."','".$cicatrizDesaparecido."','".$actualpath2."',
+		'".$regiaoCicatriz."','".$caractMarcante."','".$nomeDeclarante."','".$contatoDeclarante."')" ; 
 
-
-$sql = "INSERT INTO `tblpessoa`(`nomePessoa`, `fotoPessoa`, `celularPessoa`, `caracteristicasPessoa`, `tatuagemPessoa`, `cicatrizPessoa`, `fototatuagemPessoa`, `obscicatrizPessoa`, `caractmarcantesPessoa`, `nomedodeclarantePessoa`, `contatodeclarantePessoa`) 
-VALUES
-('".$nomeDesaparecido."','".$actualpath1."','".$celularDesaparecido."',
-'".$caractFisicas."','".$tatuagemDesaparecido."','".$cicatrizDesaparecido."','".$actualpath2."',
-'".$regiaoCicatriz."','".$caractMarcante."','".$nomeDeclarante."','".$contatoDeclarante."')" ; 
-
-if ($con->query($sql) == TRUE) {
-	echo "Cadastrado com sucesso!";
-} else {
-	echo "Erro: " . $sql . "<br>" . $conn->error;
+		if ($con->query($sql) == TRUE) {
+			echo "Cadastrado com sucesso!";
+		} else {
+			echo "Erro: " . $sql . "<br>" . $conn->error;
+		}
 }
