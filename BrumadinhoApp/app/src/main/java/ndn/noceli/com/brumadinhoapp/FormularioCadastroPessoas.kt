@@ -7,9 +7,11 @@ import android.graphics.Bitmap
 import android.widget.Toast
 import android.R.attr.bitmap
 import android.app.Activity
+import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.provider.MediaStore
 import android.content.Intent
+import android.os.Handler
 import android.util.Base64
 import android.util.Log
 import android.widget.RadioButton
@@ -142,8 +144,15 @@ class FormularioCadastroPessoas : AppCompatActivity() {
         val strreq = object : StringRequest(Request.Method.POST,
             "https://brumadinhoapp.arielgranato.com.br/cadastroDesaparecidos.php",
             Response.Listener {
+
                 Log.d("teste",it)
                 progre.pararProg()
+                Handler().post(Runnable { val builder = AlertDialog.Builder(this@FormularioCadastroPessoas)
+                    builder.setTitle("Confirmação")
+                    builder.setMessage("Cadastrado com sucesso!")
+                    builder.setNeutralButton("OK",null)
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show() })
             }, Response.ErrorListener { e -> e.printStackTrace()
             Log.e("Erro",e.message)}) {
             public override fun getParams(): Map<String, String> {

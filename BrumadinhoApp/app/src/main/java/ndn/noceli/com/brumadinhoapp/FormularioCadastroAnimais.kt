@@ -1,10 +1,12 @@
 package ndn.noceli.com.brumadinhoapp
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
 import android.util.Base64
 import android.widget.Toast
@@ -59,12 +61,25 @@ class FormularioCadastroAnimais : AppCompatActivity() {
         queue.add(object :
             StringRequest(Request.Method.POST, url, object : Response.Listener<String> {
                 override fun onResponse(response: String) {
-                Toast.makeText(this@FormularioCadastroAnimais,response,Toast.LENGTH_SHORT)
+
                     progre.pararProg()
+                    Handler().post(Runnable { val builder = AlertDialog.Builder(this@FormularioCadastroAnimais)
+                        builder.setTitle("Confirmação")
+                        builder.setMessage("Cadastrado com sucesso!")
+                        builder.setNeutralButton("OK",null)
+                        val dialog: AlertDialog = builder.create()
+                        dialog.show() })
+
                 }
             }, object : Response.ErrorListener {
                 override fun onErrorResponse(error: VolleyError) {
                     progre.pararProg()
+                    val builder = AlertDialog.Builder(this@FormularioCadastroAnimais)
+                    builder.setTitle("Confirmação")
+                    builder.setMessage("Cadastrado com sucesso!")
+                    builder.setNeutralButton("OK",null)
+                    val dialog: AlertDialog = builder.create()
+                    dialog.show()
                 }
             }) {
             @Throws(AuthFailureError::class)
